@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Co-op Game Vault</title>
+  <meta name="description" content="Kuratiertes Archiv für Koop-Spiele mit Action, Story, Plattformen und Empfehlungen." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav">
+      <a class="brand" href="#"><span class="brand-mark">CG</span><span>Co-op Game Vault</span></a>
+      <a class="github-link" href="https://github.com/Scalii/coop-game-vault" target="_blank" rel="noreferrer">GitHub</a>
+    </nav>
+    <section class="hero-content">
+      <p class="eyebrow">Koop · Action · Story</p>
+      <h1>Finde dein nächstes Koop-Abenteuer.</h1>
+      <p class="subtitle">Eine kuratierte Sammlung für Games, die man nicht nur nebeneinander, sondern wirklich zusammen spielt.</p>
+      <div class="hero-actions">
+        <a class="button primary" href="#games">Spiele ansehen</a>
+        <a class="button secondary" href="#about">Was ist das?</a>
+      </div>
+    </section>
+  </header>
+
+  <main>
+    <section class="stats" aria-label="Übersicht">
+      <article><strong id="gameCount">0</strong><span>Spiele</span></article>
+      <article><strong>2–4</strong><span>Spieler-Fokus</span></article>
+      <article><strong>Story</strong><span>nicht nur Grind</span></article>
+    </section>
+
+    <section class="toolbar" id="games">
+      <div>
+        <p class="eyebrow">Bibliothek</p>
+        <h2>Ausgewählte Koop-Games</h2>
+      </div>
+      <div class="controls">
+        <label>Suche<input id="searchInput" type="search" placeholder="z. B. Zombies, Soulslike, Shooter..." /></label>
+        <label>Kategorie<select id="genreFilter"><option value="all">Alle Genres</option></select></label>
+        <label>Spieler<select id="playerFilter"><option value="all">Alle</option><option value="2">2 Spieler</option><option value="3">3+ Spieler</option><option value="4">4 Spieler</option></select></label>
+      </div>
+    </section>
+
+    <section id="gameGrid" class="game-grid" aria-live="polite"></section>
+
+    <section class="empty-state hidden" id="emptyState">
+      <h3>Nichts gefunden.</h3>
+      <p>Probier einen anderen Suchbegriff oder setz die Filter zurück.</p>
+      <button class="button secondary" id="resetFilters">Filter zurücksetzen</button>
+    </section>
+
+    <section id="about" class="about">
+      <div><p class="eyebrow">Über das Projekt</p><h2>Eine kleine Website wie ein Game-Katalog.</h2></div>
+      <p>Dieses Projekt ist statisch gebaut und funktioniert direkt mit GitHub Pages. Du kannst die Spiele in <code>games.js</code> bearbeiten, neue Tags hinzufügen oder die Karten erweitern.</p>
+    </section>
+  </main>
+  <footer><p>Made for late-night co-op sessions.</p></footer>
+  <script src="games.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
