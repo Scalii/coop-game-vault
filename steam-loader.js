@@ -1,5 +1,48 @@
+function appendNewGenres() {
+  if (typeof genreFilter === "undefined" || !genreFilter) return;
+  const existingGenres = new Set([...genreFilter.options].map((option) => option.value));
+  const newGenres = [...new Set(games.map((item) => item.genre))].sort();
+  for (const genre of newGenres) {
+    if (existingGenres.has(genre)) continue;
+    const option = document.createElement("option");
+    option.value = genre;
+    option.textContent = genre;
+    genreFilter.append(option);
+  }
+}
+
+function refreshCatalogueViews() {
+  appendNewGenres();
+  if (typeof renderGames === "function") renderGames();
+  if (typeof renderShortlist === "function") renderShortlist();
+  if (typeof loadLivePrices === "function") loadLivePrices();
+}
+
+async function loadScriptOnce(src, marker) {
+  if (document.querySelector(`script[data-loader-marker="${marker}"]`)) return false;
+  await new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.dataset.loaderMarker = marker;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.body.appendChild(script);
+  });
+  return true;
+}
+
+async function loadStaticExpansion() {
+  try {
+    const before = games.length;
+    await loadScriptOnce("extra-games-2.js?v=2026-06-02-6", "extra-games-2");
+    if (games.length > before) refreshCatalogueViews();
+  } catch (error) {
+    console.warn("Static co-op expansion unavailable", error);
+  }
+}
+
 async function loadSteamCoopCatalogue() {
-  const statusKey = "steam-coop-loaded";
+  await loadStaticExpansion();
 
   try {
     const response = await fetch("/api/steam-coop?limit=180");
@@ -21,24 +64,8 @@ async function loadSteamCoopCatalogue() {
     }
 
     if (!added) return;
-
-    if (typeof genreFilter !== "undefined" && genreFilter) {
-      const existingGenres = new Set([...genreFilter.options].map((option) => option.value));
-      const newGenres = [...new Set(games.map((item) => item.genre))].sort();
-      for (const genre of newGenres) {
-        if (existingGenres.has(genre)) continue;
-        const option = document.createElement("option");
-        option.value = genre;
-        option.textContent = genre;
-        genreFilter.append(option);
-      }
-    }
-
-    document.body.dataset[statusKey] = String(added);
-
-    if (typeof renderGames === "function") renderGames();
-    if (typeof renderShortlist === "function") renderShortlist();
-    if (typeof loadLivePrices === "function") loadLivePrices();
+    document.body.dataset.steamCoopLoaded = String(added);
+    refreshCatalogueViews();
   } catch (error) {
     console.warn("Dynamic Steam co-op catalogue unavailable", error);
   }
