@@ -4,113 +4,115 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Co-op Game Vault</title>
-  <meta name="description" content="A cinematic co-op game discovery site with covers, game details, trailers, prices, filters, a shortlist, and a recommendation quiz." />
+  <meta name="description" content="A cinematic co-op game discovery site with covers, details, embedded trailer panels, prices, filters, a shortlist, and a recommendation quiz." />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="page-glow"></div>
 
-  <header class="hero">
+  <header class="topbar">
     <nav class="nav">
-      <a class="brand" href="#">
+      <button class="brand nav-tab" data-view="home" type="button" aria-label="Go to homepage">
         <span class="brand-mark">CG</span>
         <span>Co-op Game Vault</span>
-      </a>
-      <div class="nav-links">
-        <a href="#general-games">Library</a>
-        <a href="#shortlist">Top 5</a>
-        <a href="#quiz">Quiz</a>
-        <a class="github-link" href="https://github.com/Scalii/coop-game-vault" target="_blank" rel="noreferrer">GitHub</a>
+      </button>
+      <div class="nav-links" aria-label="Main navigation">
+        <button class="nav-tab active" data-view="home" type="button">Home</button>
+        <button class="nav-tab" data-view="library" type="button">Game Library</button>
+        <button class="nav-tab" data-view="shortlist" type="button">Top 5</button>
+        <button class="nav-tab" data-view="quiz" type="button">Quiz</button>
       </div>
     </nav>
-
-    <section class="hero-content">
-      <div class="hero-copy">
-        <p class="eyebrow">Co-op · Action · Story</p>
-        <h1>Stop scrolling. Start playing.</h1>
-        <p class="subtitle">A cinematic co-op discovery hub for groups that want action, story, style, and games worth a full weekend.</p>
-        <div class="hero-actions">
-          <a class="button primary" href="#quiz">Find my game</a>
-          <a class="button secondary" href="#general-games">Browse library</a>
-        </div>
-      </div>
-      <aside class="hero-panel">
-        <span class="panel-kicker">Tonight's flow</span>
-        <strong>Filter → inspect → watch → pick</strong>
-        <p>Open any game card for details, trailer access, pricing, platforms, and why it fits a co-op session.</p>
-      </aside>
-    </section>
   </header>
 
   <main>
-    <section class="stats" aria-label="Site overview">
-      <article><strong id="gameCount">0</strong><span>curated games</span></article>
-      <article><strong>5</strong><span>shortlist picks</span></article>
-      <article><strong>€ / £</strong><span>price toggle</span></article>
-    </section>
+    <section class="view active" id="view-home" data-view-panel="home">
+      <div class="hero-shell">
+        <section class="hero-content">
+          <div class="hero-copy">
+            <p class="eyebrow">Co-op · Action · Story · Game night</p>
+            <h1>Pick the right co-op game before the squad gets bored.</h1>
+            <p class="subtitle">A cleaner discovery page for co-op games: browse the library, open detailed game pages, watch trailer/gameplay panels, compare prices, or answer a short quiz.</p>
+            <div class="hero-actions">
+              <button class="button primary nav-tab" data-view="library" type="button">Explore games</button>
+              <button class="button secondary nav-tab" data-view="quiz" type="button">Take the quiz</button>
+            </div>
+          </div>
+          <aside class="hero-panel">
+            <span class="panel-kicker">How it works</span>
+            <strong>Choose a route</strong>
+            <div class="route-grid">
+              <button class="route-card nav-tab" data-view="library" type="button"><span>01</span><b>Library</b><small>Browse everything with filters and prices.</small></button>
+              <button class="route-card nav-tab" data-view="shortlist" type="button"><span>02</span><b>Top 5</b><small>Walk through a tighter recommendation list.</small></button>
+              <button class="route-card nav-tab" data-view="quiz" type="button"><span>03</span><b>Quiz</b><small>Answer 5 questions and get suggestions.</small></button>
+            </div>
+          </aside>
+        </section>
 
-    <section id="general-games" class="section-head">
-      <div>
-        <p class="eyebrow">General co-op library</p>
-        <h2>Explore the full co-op catalogue.</h2>
-        <p class="section-copy">A broader library of action-heavy co-op games with campaign structure, atmosphere, or story. Prices are static guide prices and can be edited in <code>games.js</code>.</p>
+        <section class="stats" aria-label="Site overview">
+          <article><strong id="gameCount">0</strong><span>curated games</span></article>
+          <article><strong>€ / £</strong><span>price toggle</span></article>
+          <article><strong>Video</strong><span>trailer panels</span></article>
+        </section>
       </div>
-
-      <div class="tool-shelf">
-        <div class="controls">
-          <label>Search<input id="searchInput" type="search" placeholder="e.g. cyberpunk, tactical, bosses..." /></label>
-          <label>Genre<select id="genreFilter"><option value="all">All genres</option></select></label>
-          <label>Players<select id="playerFilter"><option value="all">Any</option><option value="2">2 players</option><option value="3">3+ players</option><option value="4">4 players</option></select></label>
-        </div>
-        <div class="currency-toggle" aria-label="Currency selector">
-          <span>Currency</span>
-          <button class="currency-button active" data-currency="eur" type="button">EUR</button>
-          <button class="currency-button" data-currency="gbp" type="button">GBP</button>
-        </div>
-      </div>
     </section>
 
-    <section id="gameGrid" class="game-grid" aria-live="polite"></section>
-
-    <section class="empty-state hidden" id="emptyState">
-      <h3>No games found.</h3>
-      <p>Try another search term or reset the filters.</p>
-      <button class="button secondary" id="resetFilters">Reset filters</button>
+    <section class="view" id="view-library" data-view-panel="library">
+      <section class="section-head">
+        <div>
+          <p class="eyebrow">Game Library</p>
+          <h2>Browse the co-op catalogue.</h2>
+          <p class="section-copy">A larger library of co-op games with action, story, squad systems, or strong session value. Prices are static guide prices and can be edited in <code>games.js</code>.</p>
+        </div>
+        <div class="tool-shelf">
+          <div class="controls">
+            <label>Search<input id="searchInput" type="search" placeholder="e.g. cyberpunk, tactical, bosses..." /></label>
+            <label>Genre<select id="genreFilter"><option value="all">All genres</option></select></label>
+            <label>Players<select id="playerFilter"><option value="all">Any</option><option value="2">2 players</option><option value="3">3+ players</option><option value="4">4+ players</option></select></label>
+          </div>
+          <div class="currency-toggle" aria-label="Currency selector">
+            <span>Currency</span>
+            <button class="currency-button active" data-currency="eur" type="button">EUR</button>
+            <button class="currency-button" data-currency="gbp" type="button">GBP</button>
+          </div>
+        </div>
+      </section>
+      <section id="gameGrid" class="game-grid" aria-live="polite"></section>
+      <section class="empty-state hidden" id="emptyState">
+        <h3>No games found.</h3>
+        <p>Try another search term or reset the filters.</p>
+        <button class="button secondary" id="resetFilters" type="button">Reset filters</button>
+      </section>
     </section>
 
-    <section id="shortlist" class="feature-section">
-      <div class="section-head compact">
+    <section class="view" id="view-shortlist" data-view-panel="shortlist">
+      <section class="section-head compact">
         <div>
           <p class="eyebrow">Narrow selection</p>
           <h2>Go through the top 5 picks.</h2>
-          <p class="section-copy">A tighter, hand-picked sequence for when you do not want to compare the entire catalogue.</p>
+          <p class="section-copy">A focused path for nights when you want a short, curated set instead of comparing the entire catalogue.</p>
         </div>
-      </div>
+      </section>
       <div class="picker-layout">
         <aside class="picker-list" id="shortlistButtons" aria-label="Top five game selector"></aside>
         <article class="spotlight-card" id="shortlistDetail"></article>
       </div>
     </section>
 
-    <section id="quiz" class="feature-section quiz-section">
-      <div class="section-head compact">
+    <section class="view" id="view-quiz" data-view-panel="quiz">
+      <section class="section-head compact">
         <div>
           <p class="eyebrow">Recommendation quiz</p>
           <h2>Answer 5 questions. Get game suggestions.</h2>
           <p class="section-copy">Pick what fits your group best. The quiz scores the library and recommends games that match your session.</p>
         </div>
-      </div>
+      </section>
       <form id="quizForm" class="quiz-form"></form>
       <div class="quiz-actions">
         <button class="button primary" id="showResults" type="button">Show recommendations</button>
         <button class="button secondary" id="resetQuiz" type="button">Reset quiz</button>
       </div>
       <section id="quizResults" class="recommendation-grid" aria-live="polite"></section>
-    </section>
-
-    <section id="about" class="about">
-      <div><p class="eyebrow">About</p><h2>A stylish co-op catalogue for game night.</h2></div>
-      <p>This is a static GitHub Pages-ready site. You can edit games, prices, cover images, trailer search terms, and recommendation tags inside <code>games.js</code>.</p>
     </section>
   </main>
 
@@ -119,7 +121,7 @@
     <div id="modalContent"></div>
   </dialog>
 
-  <footer><p>Made for late-night co-op sessions.</p></footer>
+  <footer><p>Co-op Game Vault · Built for better game nights.</p></footer>
   <script src="games.js"></script>
   <script src="app.js"></script>
 </body>
