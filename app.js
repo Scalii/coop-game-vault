@@ -19,6 +19,8 @@ const navTabs = document.querySelectorAll(".nav-tab");
 const viewPanels = document.querySelectorAll("[data-view-panel]");
 
 let activeCurrency = "eur";
+let livePrices = {};
+let priceState = "idle";
 let lastRecommended = [];
 
 const quizQuestions = [
@@ -35,14 +37,74 @@ function showView(viewName) {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function formatPrice(game) {
+function countryForCurrency() {
+  return activeCurrency === "gbp" ? "GB" : "DE";
+}
+
+function staticPrice(game) {
   const value = game.price?.[activeCurrency];
   const symbol = activeCurrency === "eur" ? "€" : "£";
   return typeof value === "number" ? `${symbol}${value.toFixed(2)}` : "TBA";
 }
 
+function formatLiveMoney(value, currency) {
+  if (typeof value !== "number") return null;
+  try {
+    return new Intl.NumberFormat(undefined, { style: "currency", currency: currency || (activeCurrency === "eur" ? "EUR" : "GBP") }).format(value);
+  } catch {
+    const symbol = activeCurrency === "eur" ? "€" : "£";
+    return `${symbol}${value.toFixed(2)}`;
+  }
+}
+
+function getDeal(game) {
+  return livePrices[game.title] || null;
+}
+
+function formatPrice(game) {
+  const deal = getDeal(game);
+  const live = formatLiveMoney(deal?.price, deal?.currency);
+  if (live) return live;
+  if (priceState === "loading") return "Loading…";
+  return staticPrice(game);
+}
+
+function priceSubline(game) {
+  const deal = getDeal(game);
+  if (deal?.shop) return `at ${deal.shop}${typeof deal.cut === "number" && deal.cut > 0 ? ` · -${deal.cut}%` : ""}`;
+  if (priceState === "error") return "estimated price";
+  if (priceState === "loading") return "checking deals";
+  return "estimated price";
+}
+
+function dealUrl(game) {
+  const deal = getDeal(game);
+  return deal?.url || deal?.itadUrl || game.storeUrl;
+}
+
 function youtubeSearchUrl(query) {
   return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+}
+
+async function loadLivePrices() {
+  priceState = "loading";
+  renderAllPriceSensitiveViews();
+  try {
+    const response = await fetch("/api/prices", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ titles: games.map((game) => game.title), country: countryForCurrency() })
+    });
+    if (!response.ok) throw new Error(`Price API failed: ${response.status}`);
+    const data = await response.json();
+    livePrices = data.prices || {};
+    priceState = "ready";
+  } catch (error) {
+    console.warn(error);
+    livePrices = {};
+    priceState = "error";
+  }
+  renderAllPriceSensitiveViews();
 }
 
 function uniqueGenres() {
@@ -68,7 +130,7 @@ function cardTemplate(game) {
     <article class="game-card" data-title="${game.title}">
       <button class="card-hitbox" type="button" data-title="${game.title}" aria-label="Open details for ${game.title}"></button>
       <div class="card-cover" style="background-image:linear-gradient(180deg,rgba(4,6,18,.02),rgba(4,6,18,.88)),url('${game.cover}')">
-        <span class="price-pill">${formatPrice(game)}</span>
+        <span class="price-pill"><strong>${formatPrice(game)}</strong><small>${priceSubline(game)}</small></span>
         <span class="genre-pill">${game.genre}</span>
       </div>
       <div class="card-body">
@@ -109,6 +171,7 @@ function resetAllFilters() {
 function openGameModal(title) {
   const game = games.find((item) => item.title === title);
   if (!game) return;
+  const deal = getDeal(game);
   const trailerQuery = game.trailerQuery || `${game.title} official trailer`;
   const gameplayQuery = game.gameplayQuery || `${game.title} co-op gameplay`;
   modalContent.innerHTML = `
@@ -119,11 +182,11 @@ function openGameModal(title) {
           <h2>${game.title}</h2>
           <p>${game.whyPlay}</p>
           <div class="modal-actions">
-            <a class="button primary" href="${game.storeUrl}" target="_blank" rel="noreferrer">Store page</a>
+            <a class="button primary" href="${dealUrl(game)}" target="_blank" rel="noreferrer">Open cheapest deal</a>
             <a class="button secondary" href="${youtubeSearchUrl(trailerQuery)}" target="_blank" rel="noreferrer">Watch trailer</a>
           </div>
         </div>
-        <div class="modal-price"><span>Estimated price</span><strong>${formatPrice(game)}</strong></div>
+        <div class="modal-price"><span>${deal?.shop ? deal.shop : "Price"}</span><strong>${formatPrice(game)}</strong><small>${priceSubline(game)}</small></div>
       </div>
 
       <div class="modal-grid">
@@ -132,7 +195,7 @@ function openGameModal(title) {
       </div>
 
       <section class="video-section">
-        <div class="video-head"><div><p class="eyebrow">Watch</p><h3>Trailer and gameplay</h3></div><p>Open reliable YouTube results in a new tab. Broken embedded search frames were removed for smoother scrolling.</p></div>
+        <div class="video-head"><div><p class="eyebrow">Watch</p><h3>Trailer and gameplay</h3></div><p>Open reliable YouTube results in a new tab.</p></div>
         <div class="video-grid">
           <a class="watch-card" href="${youtubeSearchUrl(trailerQuery)}" target="_blank" rel="noreferrer"><span>Official trailer</span><strong>${game.title}</strong><small>Open YouTube trailer results</small></a>
           <a class="watch-card" href="${youtubeSearchUrl(gameplayQuery)}" target="_blank" rel="noreferrer"><span>Co-op gameplay</span><strong>${game.title}</strong><small>Open gameplay results</small></a>
@@ -145,8 +208,8 @@ function openGameModal(title) {
 function renderShortlist(selectedTitle = shortlistGames[0]) {
   const shortlist = shortlistGames.map((title) => games.find((game) => game.title === title)).filter(Boolean);
   const selected = shortlist.find((game) => game.title === selectedTitle) || shortlist[0];
-  shortlistButtons.innerHTML = shortlist.map((game, index) => `<button class="shortlist-button ${game.title === selected.title ? "active" : ""}" data-title="${game.title}"><span>0${index + 1}</span><strong>${game.title}</strong><small>${game.genre} · ${formatPrice(game)}</small></button>`).join("");
-  shortlistDetail.innerHTML = `<div class="spotlight-art" style="background-image:linear-gradient(180deg,rgba(8,10,24,.02),rgba(8,10,24,.92)),url('${selected.cover}')"></div><div class="spotlight-content"><p class="eyebrow">Current pick</p><h3>${selected.title}</h3><p>${selected.whyPlay}</p><div class="spotlight-meta"><span><strong>Best for:</strong> ${selected.players} players</span><span><strong>Price:</strong> ${formatPrice(selected)}</span><span><strong>Style:</strong> ${selected.vibe}</span></div><button class="button primary" type="button" id="openSpotlight">Open details</button></div>`;
+  shortlistButtons.innerHTML = shortlist.map((game, index) => `<button class="shortlist-button ${game.title === selected.title ? "active" : ""}" data-title="${game.title}"><span>0${index + 1}</span><strong>${game.title}</strong><small>${game.genre} · ${formatPrice(game)} · ${priceSubline(game)}</small></button>`).join("");
+  shortlistDetail.innerHTML = `<div class="spotlight-art" style="background-image:linear-gradient(180deg,rgba(8,10,24,.02),rgba(8,10,24,.92)),url('${selected.cover}')"></div><div class="spotlight-content"><p class="eyebrow">Current pick</p><h3>${selected.title}</h3><p>${selected.whyPlay}</p><div class="spotlight-meta"><span><strong>Best for:</strong> ${selected.players} players</span><span><strong>Price:</strong> ${formatPrice(selected)} · ${priceSubline(selected)}</span><span><strong>Style:</strong> ${selected.vibe}</span></div><button class="button primary" type="button" id="openSpotlight">Open details</button></div>`;
   shortlistButtons.querySelectorAll("button").forEach((button) => button.addEventListener("click", () => renderShortlist(button.dataset.title)));
   document.querySelector("#openSpotlight").addEventListener("click", () => openGameModal(selected.title));
 }
@@ -180,7 +243,7 @@ function renderRecommendations() {
     return;
   }
   lastRecommended = [...games].map((game) => ({ game, score: scoreGame(game, answers) })).sort((a, b) => b.score - a.score).slice(0, 3).map(({ game }) => game);
-  quizResults.innerHTML = lastRecommended.map((game, index) => `<article class="recommendation-card" style="background-image:linear-gradient(180deg,rgba(7,9,22,.1),rgba(7,9,22,.96)),url('${game.cover}')"><span class="rank">#${index + 1}</span><h3>${game.title}</h3><p>${game.description}</p><div class="meta"><span><strong>Players:</strong> ${game.players}</span><span><strong>Price:</strong> ${formatPrice(game)}</span><span><strong>Genre:</strong> ${game.genre}</span></div><button class="button secondary recommendation-open" data-title="${game.title}" type="button">Open details</button></article>`).join("");
+  quizResults.innerHTML = lastRecommended.map((game, index) => `<article class="recommendation-card" style="background-image:linear-gradient(180deg,rgba(7,9,22,.1),rgba(7,9,22,.96)),url('${game.cover}')"><span class="rank">#${index + 1}</span><h3>${game.title}</h3><p>${game.description}</p><div class="meta"><span><strong>Players:</strong> ${game.players}</span><span><strong>Price:</strong> ${formatPrice(game)}</span><span><strong>Deal:</strong> ${priceSubline(game)}</span></div><button class="button secondary recommendation-open" data-title="${game.title}" type="button">Open details</button></article>`).join("");
   quizResults.querySelectorAll(".recommendation-open").forEach((button) => button.addEventListener("click", () => openGameModal(button.dataset.title)));
 }
 
@@ -190,18 +253,23 @@ function resetQuizForm() {
   lastRecommended = [];
 }
 
-function setCurrency(currency) {
-  activeCurrency = currency;
-  currencyButtons.forEach((button) => button.classList.toggle("active", button.dataset.currency === currency));
+function renderAllPriceSensitiveViews() {
   renderGames();
   renderShortlist();
   if (lastRecommended.length) renderRecommendations();
+}
+
+function setCurrency(currency) {
+  activeCurrency = currency;
+  currencyButtons.forEach((button) => button.classList.toggle("active", button.dataset.currency === currency));
+  loadLivePrices();
 }
 
 fillGenreFilter();
 renderGames();
 renderShortlist();
 renderQuiz();
+loadLivePrices();
 
 navTabs.forEach((tab) => tab.addEventListener("click", () => showView(tab.dataset.view)));
 searchInput.addEventListener("input", renderGames);
