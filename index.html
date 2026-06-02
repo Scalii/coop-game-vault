@@ -5,127 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Co-op Game Vault</title>
   <meta name="description" content="A cinematic co-op game discovery site with covers, details, trailers, prices, filters, a shortlist, and a recommendation quiz." />
-  <link rel="stylesheet" href="styles.css?v=2026-06-02-2" />
-  <link rel="stylesheet" href="enhancements.css?v=2026-06-02-2" />
+  <link rel="stylesheet" href="styles.css?v=2026-06-02-10" />
+  <link rel="stylesheet" href="enhancements.css?v=2026-06-02-10" />
 </head>
 <body>
   <div class="page-glow"></div>
-
-  <header class="topbar">
-    <nav class="nav">
-      <button class="brand nav-tab" data-view="home" type="button" aria-label="Go to homepage">
-        <span class="brand-mark">CG</span>
-        <span>Co-op Game Vault</span>
-      </button>
-      <div class="nav-links" aria-label="Main navigation">
-        <button class="nav-tab active" data-view="home" type="button">Home</button>
-        <button class="nav-tab" data-view="library" type="button">Game Library</button>
-        <button class="nav-tab" data-view="shortlist" type="button">Top 5</button>
-        <button class="nav-tab" data-view="quiz" type="button">Quiz</button>
-      </div>
-    </nav>
-  </header>
-
+  <header class="topbar"><nav class="nav"><button class="brand nav-tab" data-view="home" type="button" aria-label="Go to homepage"><span class="brand-mark">CG</span><span>Co-op Game Vault</span></button><div class="nav-links" aria-label="Main navigation"><button class="nav-tab active" data-view="home" type="button">Home</button><button class="nav-tab" data-view="library" type="button">Game Library</button><button class="nav-tab" data-view="shortlist" type="button">Top 5</button><button class="nav-tab" data-view="quiz" type="button">Quiz</button></div></nav></header>
   <main>
-    <section class="view active" id="view-home" data-view-panel="home">
-      <div class="hero-shell">
-        <section class="hero-content">
-          <div class="hero-copy">
-            <p class="eyebrow">Co-op · Action · Story · Game night</p>
-            <h1>Pick the right co-op game before the squad gets bored.</h1>
-            <p class="subtitle">Browse co-op games, compare live deal prices, open detailed game pages, and watch Steam trailers directly when available.</p>
-            <div class="hero-actions">
-              <button class="button primary nav-tab" data-view="library" type="button">Explore games</button>
-              <button class="button secondary nav-tab" data-view="quiz" type="button">Take the quiz</button>
-            </div>
-          </div>
-          <aside class="hero-panel">
-            <span class="panel-kicker">How it works</span>
-            <strong>Choose a route</strong>
-            <div class="route-grid">
-              <button class="route-card nav-tab" data-view="library" type="button"><span>01</span><b>Library</b><small>Browse the catalogue with filters and prices.</small></button>
-              <button class="route-card nav-tab" data-view="shortlist" type="button"><span>02</span><b>Top 5</b><small>Walk through a tighter recommendation list.</small></button>
-              <button class="route-card nav-tab" data-view="quiz" type="button"><span>03</span><b>Quiz</b><small>Answer 5 questions and get suggestions.</small></button>
-            </div>
-          </aside>
-        </section>
-
-        <section class="stats" aria-label="Site overview">
-          <article><strong id="gameCount">0</strong><span>curated games</span></article>
-          <article><strong>€ / £</strong><span>live deal prices</span></article>
-          <article><strong>Video</strong><span>direct trailers</span></article>
-        </section>
-      </div>
-    </section>
-
-    <section class="view" id="view-library" data-view-panel="library">
-      <section class="section-head">
-        <div>
-          <p class="eyebrow">Game Library</p>
-          <h2>Browse the co-op catalogue.</h2>
-          <p class="section-copy">A larger library of co-op games with action, story, squad systems, or strong session value. Prices are live deal results when available and may differ by store, region, sale, or platform.</p>
-        </div>
-        <div class="tool-shelf">
-          <div class="controls">
-            <label>Search<input id="searchInput" type="search" placeholder="e.g. cyberpunk, tactical, bosses..." /></label>
-            <label>Genre<select id="genreFilter"><option value="all">All genres</option></select></label>
-            <label>Players<select id="playerFilter"><option value="all">Any</option><option value="2">2 players</option><option value="3">3+ players</option><option value="4">4+ players</option></select></label>
-          </div>
-          <div class="currency-toggle" aria-label="Currency selector">
-            <span>Currency</span>
-            <button class="currency-button active" data-currency="eur" type="button">EUR</button>
-            <button class="currency-button" data-currency="gbp" type="button">GBP</button>
-          </div>
-        </div>
-      </section>
-      <section id="gameGrid" class="game-grid" aria-live="polite"></section>
-      <section class="empty-state hidden" id="emptyState">
-        <h3>No games found.</h3>
-        <p>Try another search term or reset the filters.</p>
-        <button class="button secondary" id="resetFilters" type="button">Reset filters</button>
-      </section>
-    </section>
-
-    <section class="view" id="view-shortlist" data-view-panel="shortlist">
-      <section class="section-head compact">
-        <div>
-          <p class="eyebrow">Narrow selection</p>
-          <h2>Go through the top 5 picks.</h2>
-          <p class="section-copy">Your featured list: Dying Light: The Beast, The Division 2, Destiny 2, Borderlands 4, and FINAL FANTASY XIV Online.</p>
-        </div>
-      </section>
-      <div class="picker-layout">
-        <aside class="picker-list" id="shortlistButtons" aria-label="Top five game selector"></aside>
-        <article class="spotlight-card" id="shortlistDetail"></article>
-      </div>
-    </section>
-
-    <section class="view" id="view-quiz" data-view-panel="quiz">
-      <section class="section-head compact">
-        <div>
-          <p class="eyebrow">Recommendation quiz</p>
-          <h2>Answer 5 questions. Get game suggestions.</h2>
-          <p class="section-copy">Pick what fits your group best. The quiz scores the library and recommends games that match your session.</p>
-        </div>
-      </section>
-      <form id="quizForm" class="quiz-form"></form>
-      <div class="quiz-actions">
-        <button class="button primary" id="showResults" type="button">Show recommendations</button>
-        <button class="button secondary" id="resetQuiz" type="button">Reset quiz</button>
-      </div>
-      <section id="quizResults" class="recommendation-grid" aria-live="polite"></section>
-    </section>
+    <section class="view active" id="view-home" data-view-panel="home"><div class="hero-shell"><section class="hero-content"><div class="hero-copy"><p class="eyebrow">Co-op · Action · Story · Game night</p><h1>Pick the right co-op game before the squad gets bored.</h1><p class="subtitle">Browse co-op games, compare live deal prices, open detailed game pages, and watch Steam trailers directly when available.</p><div class="hero-actions"><button class="button primary nav-tab" data-view="library" type="button">Explore games</button><button class="button secondary nav-tab" data-view="quiz" type="button">Take the quiz</button></div></div><aside class="hero-panel"><span class="panel-kicker">How it works</span><strong>Choose a route</strong><div class="route-grid"><button class="route-card nav-tab" data-view="library" type="button"><span>01</span><b>Library</b><small>Browse the catalogue with filters and prices.</small></button><button class="route-card nav-tab" data-view="shortlist" type="button"><span>02</span><b>Top 5</b><small>Walk through a tighter recommendation list.</small></button><button class="route-card nav-tab" data-view="quiz" type="button"><span>03</span><b>Quiz</b><small>Answer 5 questions and get suggestions.</small></button></div></aside></section><section class="stats" aria-label="Site overview"><article><strong id="gameCount">0</strong><span>curated games</span></article><article><strong>€ / £</strong><span>live deal prices</span></article><article><strong>Video</strong><span>direct trailers</span></article></section></div></section>
+    <section class="view" id="view-library" data-view-panel="library"><section class="section-head"><div><p class="eyebrow">Game Library</p><h2>Browse the co-op catalogue.</h2><p class="section-copy">A larger library of co-op games with action, story, squad systems, or strong session value. Prices are live deal results when available and may differ by store, region, sale, or platform.</p></div><div class="tool-shelf"><div class="controls"><label>Search<input id="searchInput" type="search" placeholder="e.g. cyberpunk, tactical, bosses..." /></label><label>Genre<select id="genreFilter"><option value="all">All genres</option></select></label><label>Players<select id="playerFilter"><option value="all">Any</option><option value="2">2 players</option><option value="3">3+ players</option><option value="4">4+ players</option></select></label></div><div class="currency-toggle" aria-label="Currency selector"><span>Currency</span><button class="currency-button active" data-currency="eur" type="button">EUR</button><button class="currency-button" data-currency="gbp" type="button">GBP</button></div></div></section><section id="gameGrid" class="game-grid" aria-live="polite"></section><section class="empty-state hidden" id="emptyState"><h3>No games found.</h3><p>Try another search term or reset the filters.</p><button class="button secondary" id="resetFilters" type="button">Reset filters</button></section></section>
+    <section class="view" id="view-shortlist" data-view-panel="shortlist"><section class="section-head compact"><div><p class="eyebrow">Narrow selection</p><h2>Go through the top 5 picks.</h2><p class="section-copy">Your featured list: The Division 2, Space Marine 2, Gears 5, Forza 6, and Overwatch (2026).</p></div></section><div class="picker-layout"><aside class="picker-list" id="shortlistButtons" aria-label="Top five game selector"></aside><article class="spotlight-card" id="shortlistDetail"></article></div></section>
+    <section class="view" id="view-quiz" data-view-panel="quiz"><section class="section-head compact"><div><p class="eyebrow">Recommendation quiz</p><h2>Answer 5 questions. Get game suggestions.</h2><p class="section-copy">Pick what fits your group best. The quiz scores the library and recommends games that match your session.</p></div></section><form id="quizForm" class="quiz-form"></form><div class="quiz-actions"><button class="button primary" id="showResults" type="button">Show recommendations</button><button class="button secondary" id="resetQuiz" type="button">Reset quiz</button></div><section id="quizResults" class="recommendation-grid" aria-live="polite"></section></section>
   </main>
-
-  <dialog id="gameModal" class="game-modal">
-    <button class="modal-close" id="modalClose" type="button" aria-label="Close game details">×</button>
-    <div id="modalContent"></div>
-  </dialog>
-
+  <dialog id="gameModal" class="game-modal"><button class="modal-close" id="modalClose" type="button" aria-label="Close game details">×</button><div id="modalContent"></div></dialog>
   <footer><p>Co-op Game Vault · Built for better game nights.</p></footer>
-  <script src="games.js?v=2026-06-02-2"></script>
-  <script src="extra-games.js?v=2026-06-02-2"></script>
-  <script src="app.js?v=2026-06-02-2"></script>
-  <script src="steam-loader.js?v=2026-06-02-2"></script>
+  <script src="games.js?v=2026-06-02-10"></script>
+  <script src="extra-games.js?v=2026-06-02-10"></script>
+  <script src="app.js?v=2026-06-02-10"></script>
+  <script src="steam-loader.js?v=2026-06-02-10"></script>
 </body>
 </html>
