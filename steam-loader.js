@@ -15,6 +15,7 @@ function refreshCatalogueViews() {
   appendNewGenres();
   if (typeof renderGames === "function") renderGames();
   if (typeof renderShortlist === "function") renderShortlist();
+  if (typeof window.renderRequestedTopFive === "function") window.renderRequestedTopFive();
   if (typeof loadLivePrices === "function") loadLivePrices();
 }
 
@@ -34,8 +35,9 @@ async function loadScriptOnce(src, marker) {
 async function loadStaticExpansion() {
   try {
     const before = games.length;
-    await loadScriptOnce("extra-games-2.js?v=2026-06-02-6", "extra-games-2");
-    if (games.length > before) refreshCatalogueViews();
+    await loadScriptOnce("extra-games-2.js?v=2026-06-02-7", "extra-games-2");
+    await loadScriptOnce("top5-overrides.js?v=2026-06-02-7", "top5-overrides");
+    if (games.length > before || typeof window.renderRequestedTopFive === "function") refreshCatalogueViews();
   } catch (error) {
     console.warn("Static co-op expansion unavailable", error);
   }
