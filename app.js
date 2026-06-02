@@ -41,10 +41,6 @@ function formatPrice(game) {
   return typeof value === "number" ? `${symbol}${value.toFixed(2)}` : "TBA";
 }
 
-function youtubeEmbedUrl(query) {
-  return `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(query)}`;
-}
-
 function youtubeSearchUrl(query) {
   return `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
 }
@@ -124,10 +120,10 @@ function openGameModal(title) {
           <p>${game.whyPlay}</p>
           <div class="modal-actions">
             <a class="button primary" href="${game.storeUrl}" target="_blank" rel="noreferrer">Store page</a>
-            <a class="button secondary" href="${youtubeSearchUrl(trailerQuery)}" target="_blank" rel="noreferrer">Open trailer on YouTube</a>
+            <a class="button secondary" href="${youtubeSearchUrl(trailerQuery)}" target="_blank" rel="noreferrer">Watch trailer</a>
           </div>
         </div>
-        <div class="modal-price"><span>Guide price</span><strong>${formatPrice(game)}</strong></div>
+        <div class="modal-price"><span>Estimated price</span><strong>${formatPrice(game)}</strong></div>
       </div>
 
       <div class="modal-grid">
@@ -136,10 +132,10 @@ function openGameModal(title) {
       </div>
 
       <section class="video-section">
-        <div class="video-head"><div><p class="eyebrow">Watch directly</p><h3>Trailer and gameplay</h3></div><p>Embedded YouTube search panels are used so each game can show relevant videos without a backend.</p></div>
+        <div class="video-head"><div><p class="eyebrow">Watch</p><h3>Trailer and gameplay</h3></div><p>Open reliable YouTube results in a new tab. Broken embedded search frames were removed for smoother scrolling.</p></div>
         <div class="video-grid">
-          <article class="video-card"><h4>Official trailer</h4><iframe title="${game.title} trailer" src="${youtubeEmbedUrl(trailerQuery)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></article>
-          <article class="video-card"><h4>Co-op gameplay</h4><iframe title="${game.title} gameplay" src="${youtubeEmbedUrl(gameplayQuery)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></article>
+          <a class="watch-card" href="${youtubeSearchUrl(trailerQuery)}" target="_blank" rel="noreferrer"><span>Official trailer</span><strong>${game.title}</strong><small>Open YouTube trailer results</small></a>
+          <a class="watch-card" href="${youtubeSearchUrl(gameplayQuery)}" target="_blank" rel="noreferrer"><span>Co-op gameplay</span><strong>${game.title}</strong><small>Open gameplay results</small></a>
         </div>
       </section>
     </div>`;
